@@ -64,6 +64,7 @@ void initServos() {
     //Setting the initial positions of the robotic arm (only shoulder)
     servoBoard.setPWM(leftShoulderServo, 0, map(startShoulderAngle, 0, 180, leftShoulderMax, leftShoulderMin));
     servoBoard.setPWM(rightShoulderServo, 0, map(startShoulderAngle, 0, 180, rightShoulderMin, rightShoulderMax));
+    delay(2000);
     servoBoard.setPWM(forearmServo, 0, forearmMin);
     delay(1000);
     servoBoard.setPWM(wristServo, 0, wristMin);   
@@ -84,8 +85,10 @@ void initServos() {
 void placeObject()
 {   
     delay(1000);
-    boolean completedRun = false;
-    int colorNum = checkColor();
+    boolean completedRun = false; //Determines if we finished placing an object or not
+    int colorNum = checkColor(); //Gets the color that we read from the sensor
+
+
     if(colorNum == 1 && !completedRun) { //If the object is red
         delay(200);
         goHome();
@@ -96,7 +99,7 @@ void placeObject()
 
         delay(500);
         printf("Placing the red object in the bin.");
-        rotateOneEighty(100);
+        //In this line, some rotation to place the object in the correct bin
         moveTo(50, 60, 70);
         dropObject();
         printf("Placed the red object in the bin");
@@ -116,7 +119,7 @@ void placeObject()
 
         delay(500);
         printf("Placing the green object in the bin.");
-        rotateNinety(0, 100);
+        //In this line, some rotation to place the object in the correct bin
         moveTo(50, 60, 70);
         dropObject();
         printf("Placed the green object in the bin.");
@@ -126,7 +129,7 @@ void placeObject()
         return;
 
 
-    }  else if(colorNum == 3 && !completedRun) {// If the ob ject is blue 
+    }  else if(colorNum == 3 && !completedRun) {// If the object is blue 
         delay(200);
         goHome();
         delay(1000);
@@ -136,7 +139,7 @@ void placeObject()
 
         delay(500);
         printf("Placing the blue object in the bin.");
-        rotateNinety(1, 100);
+        //In this line, some rotation to place the object in the correct bin
         moveTo(50, 60, 70);
         dropObject();
         printf("Placed the blue object in the bin.");
@@ -150,7 +153,6 @@ void placeObject()
         goHome();
         printf("No object can be placed");
     }
-
 
 }
 
@@ -318,4 +320,13 @@ void goHome()
 {   
     
    initServos();
+}
+
+void grabObject() {
+    //Should follow the same movement and procedures for grabbing an object from the ramp
+}
+
+void dropObject() {
+    //Shoud follow the same movement and procedure for dropping an object in the basket.
+    //The only difference is where the base rotates to place the object.
 }

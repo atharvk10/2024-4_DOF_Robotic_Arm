@@ -60,7 +60,7 @@ bool checkIfVisible()
 
 int checkColor()
 {
-        //Checking for red
+    if(checkIfVisible) {
         digitalWrite(S2, LOW);
         digitalWrite(S3, LOW);
         int redFreq = pulseIn(OUT, LOW);
@@ -110,9 +110,13 @@ int checkColor()
             Serial.println("YELLOW DETECTED");
             return 3;
         }
-
-        Serial.println();
-
+        
+    } else {
+        Serial.print("Object not detected.");
+    }
+        //Checking for red
+        
+    Serial.println();
     return 0;
 
    

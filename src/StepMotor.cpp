@@ -39,3 +39,9 @@ void rotateOneEighty(int speed)
 
 }
 
+void rotate(int steps, int speed) {
+    baseMotor.setSpeed(speed);
+    baseMotor.step(steps);
+    delay(motorDelay);
+}
+
