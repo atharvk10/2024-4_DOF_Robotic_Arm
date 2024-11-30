@@ -23,7 +23,7 @@ The mechanical arm is made up of the following components:
 - **Motor Driver**: A4998 Motor Driver
 - **Motors**: NEMA17 Stepper Motor
 - **Servo Driver**: PCA9685 Servo Driver
-- **Servo**: MG996 Servo
+- **Servo**: MGR996 Servo
 - **Color Sensor**: TCS3200 Color Sensor
 - **Distance Sensor**: HC-SCR04 Ultrasonic Sensor
 - **Power Supply**: NiMH 12V for Motor and 9V Rechargable Battery
@@ -40,7 +40,7 @@ The software of coding the robotic arm is in VS Code with PlatformIO System in C
 The robotic arm has an IK (Inverse Kinematic) Algorithm for precise movement and positioning of end effector.
 The robot performs tasks autonomously based on the color and distance sensor.
 
-                                              General Software Mechanism of Robot
+                                      General Software Mechanism of Robot
 <img width="408" alt="Screenshot 2024-11-29 at 10 41 42 PM" src="https://github.com/user-attachments/assets/405f7bf5-468f-4596-bc33-5a4c1b4e05a8">
 
 
