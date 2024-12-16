@@ -5,16 +5,16 @@
 
 #define MIN_PULSE_WIDTH 650
 #define MAX_PULSE_WIDTH 2350
-#define FREQ 50
+#define FREQ 60
 
 Adafruit_PWMServoDriver servoBoard = Adafruit_PWMServoDriver();
 
 //Servo Ports
-int wristServo = 15;
 int forearmServo = 3;
 int clawServo = 4;
 int leftShoulderServo = 8; //Shoulder arm that has the forerarm servo attached.
 int rightShoulderServo = 9;
+int wristServo = 15;
 
 //MIN and MAX PUlSE NUMBERS (with respect to the vertical axis from the base of the robot)
 //The angles in degrees is in respect to the opening of the stepper motor plugin
@@ -56,11 +56,40 @@ int startForearmAngle = 135;
 
 //Threads, having method checks in loops to make sure that the current method is done.
 
+/*How does Servo PWM work?
+
+    Most servos are controlled by PWM.
+    By giving it a pulse width, it moves accordingly.
+    The signals that we give the servos have a period of 20 ms, which is 50 hz
+
+    A servo's position is determined by the width of the pulse.
+        If we have a longer pulse/longer on time, then the servo will rotate more and longer
+        If its a shorter pulse, then the servo will rotate less and for less time
+
+    If I pass a larger PWM value in the method, I am telling the servo to move a far distance and much longer.
+    When we find the pulse numbers for each servo, it's the numbers that describe how long the pulse has to be on for.
+
+    A MIN pulse means it tells the servo to rotate to it's extreme position in NEAREST DIRECTION.
+    A MAX pulse means it tells the servo to rotate to it's extreme position in the OPPOSITE DIRECTION
+
+    for the setPWM() method --> first parameter is what servo we are controlling
+        - Second parameter is essentially says WHEN should we make the pulse go from low to high (essentially turn on the signal)
+        - Third parameter tells us WHEN we should make the pulse from go high to low (essentially turn off the signal)
+
+        The pulse width length of one cycle is equal to third parameter - second parameter
+        (THE LONGER THE WIDTH LENGTH IS, THE LONGER THE SERVO MOVES FOR)
+
+        The second and third parameters are measured from 0 - 4096.
+
+
+*/
+
 
 void initServos() {
     servoBoard.begin();
     servoBoard.setPWMFreq(FREQ);
 
+    delay(500);
     //Setting the initial positions of the robotic arm (only shoulder)
     servoBoard.setPWM(leftShoulderServo, 0, map(startShoulderAngle, 0, 180, leftShoulderMax, leftShoulderMin));
     servoBoard.setPWM(rightShoulderServo, 0, map(startShoulderAngle, 0, 180, rightShoulderMin, rightShoulderMax));
@@ -74,6 +103,7 @@ void initServos() {
     currentShoulderAngle = startShoulderAngle;
     currentForearmAngle = 180;
     currentWristAngle = 180;
+
     moveClaw(0);
     delay(1000);
     moveClaw(135);
@@ -82,25 +112,22 @@ void initServos() {
 
 }
 
-void placeObject()
+void perform()
 {   
     delay(1000);
     boolean completedRun = false; //Determines if we finished placing an object or not
-    int colorNum = checkColor(); //Gets the color that we read from the sensor
+    int colorNum = readColor(); //Gets the color that we read from the sensor after detecting there is an object
 
 
     if(colorNum == 1 && !completedRun) { //If the object is red
         delay(200);
-        goHome();
-        moveTo(50, 60, 70);
         printf("Moving to pick up the red object from the sensor.");
-        grabObject();
+        pickUpObject();
         printf("Picked up the red object.");
 
         delay(500);
         printf("Placing the red object in the bin.");
-        //In this line, some rotation to place the object in the correct bin
-        moveTo(50, 60, 70);
+        rotate(100, 60); //Moves to the right by 45 degrees at a speed of 60 RPM
         dropObject();
         printf("Placed the red object in the bin");
 
@@ -110,17 +137,12 @@ void placeObject()
 
     } else if(colorNum == 2 && !completedRun) { //If the object is green
         delay(200);
-        goHome();
-        delay(1000);
-        moveTo(50, 60, 70);
         printf("Moving to pick up the green object from the sensor.");
-        grabObject();
+        pickUpObject();
         printf("Picked up the green object");
 
         delay(500);
         printf("Placing the green object in the bin.");
-        //In this line, some rotation to place the object in the correct bin
-        moveTo(50, 60, 70);
         dropObject();
         printf("Placed the green object in the bin.");
 
@@ -131,16 +153,13 @@ void placeObject()
 
     }  else if(colorNum == 3 && !completedRun) {// If the object is blue 
         delay(200);
-        goHome();
-        delay(1000);
         printf("Moving to pick up the blue object from the sensor.");
-        grabObject();
+        pickUpObject();
         printf("Picked up the blue object");
 
         delay(500);
         printf("Placing the blue object in the bin.");
-        //In this line, some rotation to place the object in the correct bin
-        moveTo(50, 60, 70);
+        rotate(-100, 60);
         dropObject();
         printf("Placed the blue object in the bin.");
 
@@ -150,7 +169,6 @@ void placeObject()
 
     } else {
         delay(1000);
-        goHome();
         printf("No object can be placed");
     }
 
@@ -158,7 +176,6 @@ void placeObject()
 
 void moveShoulder(int angle)
 {   
-    
      int leftSignal;
      int rightSignal;
 
@@ -166,9 +183,9 @@ void moveShoulder(int angle)
          for(int i = currentShoulderAngle; i <= angle; i += 5) {
             leftSignal = map(i, 0, 180, leftShoulderMax, leftShoulderMin);
             rightSignal = map(i, 0, 180, rightShoulderMin, rightShoulderMax);
-            delayMicroseconds(10);
+            delay(10);
             servoBoard.setPWM(leftShoulderServo, 0, leftSignal);
-            delayMicroseconds(10);
+            delay(10);
             servoBoard.setPWM(rightShoulderServo, 0, rightSignal);
          }
 
@@ -176,9 +193,9 @@ void moveShoulder(int angle)
         for(int i = currentShoulderAngle; i >= angle; i -= 5) {
             leftSignal = map(i, 0, 180, leftShoulderMax, leftShoulderMin);
             rightSignal = map(i, 0, 180, rightShoulderMin, rightShoulderMax);
-            delayMicroseconds(10);
+            delay(10);
             servoBoard.setPWM(leftShoulderServo, 0, leftSignal);
-            delayMicroseconds(10);
+            delay(10);
             servoBoard.setPWM(rightShoulderServo, 0, rightSignal);
         }
 
@@ -200,14 +217,14 @@ void moveForearm(int angle)
         for(int i = currentForearmAngle; i <= angle; i += 5) {
             forearmSignal = map(i, 0, 180, forearmMax, forearmMin);
             servoBoard.setPWM(forearmServo, 0, forearmSignal);
-            delayMicroseconds(10);
+            delay(10);
          }
 
      } else {
         for(int i = currentForearmAngle; i >= angle; i -= 5) {
             forearmSignal = map(i, 0, 180, forearmMax, forearmMin);
             servoBoard.setPWM(forearmServo, 0, forearmSignal);
-            delayMicroseconds(10);
+            delay(10);
          }
 
      }
@@ -222,6 +239,7 @@ void moveClaw(int angle) {
 
     int clawSignal = map(angle, 0, 180, clawClose, clawOpen);
     servoBoard.setPWM(clawServo, 0, clawSignal);
+    currentClawAngle = angle;
     delay(500);
 }
 
@@ -264,7 +282,7 @@ void moveTo(double x, double y, double angleInDegrees)
 
     
 
-    double angleInRadians = angleInDegrees / 180;
+    double angleInRadians = angleInDegrees * (PI/ 180);
     double shoulderAngleOne, shoulderAngleTwo;
     double forearmAngleOne, forearmAngleTwo;
     double wristAngleOne, wristAngleTwo; 
@@ -316,17 +334,13 @@ void moveTo(double x, double y, double angleInDegrees)
      
 }
 
-void goHome() 
-{   
-    
-   initServos();
-}
-
-void grabObject() {
+void pickUpObject() {
     //Should follow the same movement and procedures for grabbing an object from the ramp
+    //Should call the moveTo function here to pick up the objects accorindgly
 }
 
 void dropObject() {
     //Shoud follow the same movement and procedure for dropping an object in the basket.
     //The only difference is where the base rotates to place the object.
+    //Should call the moveTo function here to pick up the objects accorindgly
 }

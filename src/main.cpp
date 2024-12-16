@@ -19,13 +19,15 @@ void setup() {
 }
 
 void loop() {
-  boolean finishedRun = false;
-  while(!finishedRun) {
-    placeObject();
-    delay(500);
+  moveTo(10, 5, 90);
+  
+  // boolean finishedRun = false;
+  // while(!finishedRun) {
+  //   placeObject();
+  //   delay(500);
 
-    finishedRun = true;
-  }
+  //   finishedRun = true;
+  // }
 
 
 

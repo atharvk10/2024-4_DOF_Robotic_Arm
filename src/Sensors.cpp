@@ -16,9 +16,20 @@ int blueMin = 74, blueMax = 117;
 int redThreshold = 225;
 int greenThreshold = 225;
 int blueThreshold = 225;
+double minDistance = 1.5;
 
+/*
+    How the TCS3200 sensor works? 
+        - 8x8 array of photodioides
+        - S2 and S3 select which color we want to detect
+        - S0 and S1 which scales the output frequency (helps for optimization)
 
-double minDistance = 6.5;
+    How the HC-SRO4
+        - Shoots ultrasonic sound.
+        - Reads the time that it takes to reach back to the sensor.
+            - Need to divide by 2 to account for just one distance travel.
+
+*/
 
 void initSensors() {
 
@@ -28,6 +39,8 @@ void initSensors() {
     pinMode(S2, OUTPUT);
     pinMode(S3, OUTPUT);
     pinMode(OUT, INPUT);
+
+    //Setting frequnecy scaling to 20%.
     digitalWrite(S0, HIGH);
     digitalWrite(S1, LOW);
     Serial.begin(9600);
@@ -38,16 +51,17 @@ void initSensors() {
 }
 
 bool checkIfVisible()
-{
+{   
+    //Sends a pulse from the distance sensor.
     digitalWrite(TRIGGER, LOW);
     delayMicroseconds(2);
     digitalWrite(TRIGGER, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIGGER, LOW);
 
-
-    double duration = pulseIn(ECHO, HIGH);
-    double distance = (duration * 0.034)/2;
+    //Calculates the distance
+    long duration = pulseIn(ECHO, HIGH);
+    long distance = (duration * 0.034)/2;
     
     Serial.println(distance);
 
@@ -58,9 +72,10 @@ bool checkIfVisible()
     }
 }
 
-int checkColor()
+int readColor()
 {
     if(checkIfVisible) {
+        //Checking for red
         digitalWrite(S2, LOW);
         digitalWrite(S3, LOW);
         int redFreq = pulseIn(OUT, LOW);
@@ -118,8 +133,7 @@ int checkColor()
         
     Serial.println();
     return 0;
-
-   
+ 
 }  
 
 

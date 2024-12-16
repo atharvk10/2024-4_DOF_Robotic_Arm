@@ -20,7 +20,7 @@ void rotateOneEighty(int speed);
 //Rotates a number of steps at a certain speed
 /*Paraneters:
     Steps - Number of steps that the motor moves
-    Speed - Sets the speed that the base rotates 180 degrees.
+    Speed - Sets the speed that the base rotates
 */
 void rotate(int steps, int speed);
 
