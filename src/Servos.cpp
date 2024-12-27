@@ -271,65 +271,7 @@ void moveTo(double x, double y, double angleInDegrees)
 {   
     //Everything is radians with cos and sin! We need to convert the final answers for angles into degrees
     //Lengths are measured from starting to next servo horn
-    double shoulderLength = 18;
-    double forearmLength = 17;
-    double wristLength = 18;
-
-    if(shoulderLength + forearmLength + wristLength < (x + y) || x == 0 || y == 0 || angleInDegrees < 0 || angleInDegrees > 180) {
-        Serial.println("x, y position, or angle is not valid.");
-        return;
-    }
-
     
-
-    double angleInRadians = angleInDegrees * (PI/ 180);
-    double shoulderAngleOne, shoulderAngleTwo;
-    double forearmAngleOne, forearmAngleTwo;
-    double wristAngleOne, wristAngleTwo; 
-
-    double shoulderNum = 34 + pow(x, 2) + pow(y, 2);
-    double shoulderDenom = 35 * sqrt(pow(x, 2) + pow(y, 2));
-    shoulderAngleOne = atan(y/x) + acos(shoulderNum / shoulderDenom);
-    shoulderAngleTwo = atan(y/x) - acos(shoulderNum / shoulderDenom);
-
-    double forearmNumOne = y - 17.5 * sin(shoulderAngleOne);
-    double forearmDenomOne = x - 17.5 * cos(shoulderAngleOne);
-    forearmAngleOne = atan(forearmNumOne / forearmDenomOne) - shoulderAngleOne;
-
-    double forearmNumTwo = y - 17.5 * sin(shoulderAngleTwo);
-    double forearmDenomTwo = x - 17.5 * cos(shoulderAngleTwo);
-    forearmAngleTwo = atan(forearmNumTwo / forearmDenomTwo) - shoulderAngleTwo;
-
-    wristAngleOne = angleInRadians - forearmAngleOne - shoulderAngleOne;
-    wristAngleTwo = angleInRadians - forearmAngleTwo - shoulderAngleTwo;
-
-    shoulderAngleOne = (shoulderAngleOne * 180)/PI;
-    shoulderAngleTwo = (shoulderAngleTwo * 180)/PI;
-
-    forearmAngleOne = (forearmAngleOne * 180)/PI;
-    forearmAngleTwo = (forearmAngleTwo * 180)/PI;
-
-    wristAngleOne = (wristAngleOne * 180)/PI;
-    wristAngleTwo = (wristAngleTwo * 180)/PI;
-
-    Serial.println(shoulderAngleOne);
-    Serial.println(forearmAngleOne);
-    Serial.println(wristAngleOne);
-
-    if(shoulderAngleOne < 0) shoulderAngleOne += 180;
-    if(forearmAngleOne < 0) forearmAngleOne += 180;
-    if(wristAngleOne < 0) wristAngleOne += 180;
-
-    Serial.println(shoulderAngleOne);
-    Serial.println(forearmAngleOne);
-    Serial.println(wristAngleOne);
-
-    moveWrist(wristAngleOne);
-    delay(3000);
-    moveForearm(forearmAngleOne);
-    delay(3000);
-    moveShoulder(shoulderAngleOne);
-    delay(3000);
 
      
 }
