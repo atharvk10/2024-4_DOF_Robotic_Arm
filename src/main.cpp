@@ -9,18 +9,13 @@ void setup() {
   // put your setup code here, to run once:
     Serial.begin(9600);
     initSensors();
-    delay(1000);
     initServos();
-    delay(1000);
-    moveForearm(125);
-    delay(2000);
-    
+
+    moveClaw(180);
 
 }
 
 void loop() {
-  moveTo(10, 5, 90);
-  
   // boolean finishedRun = false;
   // while(!finishedRun) {
   //   placeObject();
@@ -28,6 +23,31 @@ void loop() {
 
   //   finishedRun = true;
   // }
+
+  delay(1000);
+  moveClaw(180);
+  delay(1000);
+  moveClaw(90);
+  delay(1000);
+  moveClaw(0);
+  
+
+
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -9,7 +9,7 @@ void initServos();
 
 //Place the object in the correct box/spot given the color (back = blue, right = red, left = green).
 //Note to self: Implement the rotateNinety and rotateOneEighty methods for this.
-void perform();
+void placeObject();
 
 //Moves the two shoulder servos at the same time to a certain position.
 //Note to self: Servos on the base are placed in opposite directions.
@@ -24,8 +24,12 @@ void moveWrist(int angle);
 void moveClaw(int angle);
 
 //Implements IK algorithm to move the end effector to a XYZ position in space.
-void moveTo(double x, double y, double angleInDegrees);
+void moveTo(double Xe, double Ye, double AngleEInDeg);
 
-void pickUpObject();
+//The robot goes back to home position
+void goHome();
+
+void grabObject();
 
 void dropObject();
+

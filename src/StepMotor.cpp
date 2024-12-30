@@ -1,11 +1,11 @@
 #include "StepMotor.h"
 
 #define NUMOFSTEPS 800 
-#define MAXMOTORSPEED 500 
+#define AXMOTORSPEED 500 M
 
-#define HALFREV 400 //180 degrees
-#define FULLREV 800 //360 degrees
-#define SIDEREV 200 //90 degrees
+#define HALFREV 400
+#define FULLREV 800
+#define SIDEREV 200
 
 #define MOTORSPEED 150
 
@@ -17,7 +17,7 @@ int DIR = 30;
 int STEP = 28;
 
 Stepper baseMotor = Stepper(NUMOFSTEPS, STEP, DIR);
-int motorDelay = 1000;
+int motorDelay = 500;
 
 void rotateNinety(int dir, int speed)
 {
@@ -39,10 +39,7 @@ void rotateOneEighty(int speed)
 
 }
 
-void rotate(int steps, int speed) {
-    baseMotor.setSpeed(speed);
-    delay(500);
-    baseMotor.step(steps);
-    delay(motorDelay);
+void rotate(int numOfSteps, int dir, int speed) {
+    
 }
 
