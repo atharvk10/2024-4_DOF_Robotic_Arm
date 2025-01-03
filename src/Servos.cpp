@@ -10,11 +10,11 @@
 Adafruit_PWMServoDriver servoBoard = Adafruit_PWMServoDriver();
 
 //Servo Ports
-int forearmServo = 3;
 int clawServo = 4;
-int leftShoulderServo = 8; //Shoulder arm that has the forerarm servo attached (looking at it from the front ahead).
-int rightShoulderServo = 9;
-int wristServo = 15;
+int leftShoulderServo = 0; //Shoulder arm that has the forerarm servo attached (looking at it from the front ahead).
+int rightShoulderServo = 3;
+int forearmServo = 7;
+int wristServo = 11;
 
 
 //MIN and MAX PUlSE NUMBERS (with respect to the vertical axis from the base of the robot)
@@ -25,23 +25,23 @@ int clawOpen = 525;
 int clawHalfOpen = 313;
 int clawClose = 100;
 
-int wristMax = 85; //180 degrees
+int wristMax = 515; //180 degrees
 int wirstMiddle = 300; //90 degrees
-int wristMin = 515; //0 degrees
+int wristMin = 85; //0 degrees
 
-int forearmMax = 110; //180 degrees
+int forearmMax = 525; //180 degrees
 int forearmMiddle = 315; //90 degrees
-int forearmMin = 525; //0 degrees
+int forearmMin = 110; //0 degrees
 
 //Respect to the servo side of left servo shoulder (DONE)
-int leftShoulderMin = 525; //0 degrees
+int leftShoulderMin = 85; //0 degrees
 int leftShoulderMiddle = 313; //90 degrees
-int leftShoulderMax = 100; //180 degrees
+int leftShoulderMax = 540; //180 degrees
 
 //Respect to the servo of right shoulder
-int rightShoulderMin = 110; //0 degrees
+int rightShoulderMin = 550; //0 degrees
 int rightShoulderMiddle = 325; //90 degrees
-int rightShoulderMax = 540; //180 degrees
+int rightShoulderMax = 110; //180 degrees
 
 //Variables to track current positions of the servos
 int secDelay = 500;
@@ -52,9 +52,10 @@ int currentWristAngle;
 int currentClawAngle;
 
 //Setting initial positions of the robotic arm
-int startShoulderAngle = 150;
+int startShoulderAngle = 90;
+int startForearmAngle = 90;
+int startWristAngle = 135;
 int startClawAngle;
-int startForearmAngle = 135;
 
 
 void initServos() {
@@ -62,17 +63,18 @@ void initServos() {
     servoBoard.setPWMFreq(FREQ);
 
     //Setting the initial positions of the robotic arm (only shoulder)
-   // servoBoard.setPWM(leftShoulderServo, 0, map(startShoulderAngle, 0, 180, leftShoulderMin, leftShoulderMax));
-  //  servoBoard.setPWM(rightShoulderServo, 0, map(startShoulderAngle, 0, 180, rightShoulderMin, rightShoulderMax));
-   // servoBoard.setPWM(forearmServo, 0, forearmMin);
+    servoBoard.setPWM(leftShoulderServo, 0, map(startShoulderAngle, 0, 180, leftShoulderMin, leftShoulderMax));
+    servoBoard.setPWM(rightShoulderServo, 0, map(startShoulderAngle, 0, 180, rightShoulderMin, rightShoulderMax));
+    delay(2000);
+    servoBoard.setPWM(forearmServo, 0, map(startForearmAngle, 0, 180, forearmMin, forearmMax));
     delay(1000);
-  //  servoBoard.setPWM(wristServo, 0, wristMin);   
-    delay(500);
-    //Set the initial variables for the initial angles
+    servoBoard.setPWM(wristServo, 0, map(startWristAngle, 0, 180, wristMin, wristMax));   
+    delay(2000);
 
+    //Set the initial variables for the initial angles
     currentShoulderAngle = startShoulderAngle;
-    currentForearmAngle = 180;
-    currentWristAngle = 180;
+    currentForearmAngle = startForearmAngle;
+    currentWristAngle = startWristAngle;
     // moveClaw(0);
     // delay(1000);
     // moveClaw(135);
@@ -158,63 +160,101 @@ void moveShoulder(int angle)
 {   
       if(angle < 0 || angle > 180) return;
 
-     int leftSignal = map(angle, 0, 180, leftShoulderMin, leftShoulderMax);
-     int rightSignal = map(angle, 0, 180, rightShoulderMin, rightShoulderMax);
+     int finalLeftPWM = map(angle, 0, 180, leftShoulderMin, leftShoulderMax);
+     int finalRightPWM = map(angle, 0, 180, rightShoulderMin, rightShoulderMax);
 
-    //  if(angle > currentShoulderAngle) {
-    //      for(int i = currentShoulderAngle; i <= angle; i += 5) {
-    //         leftSignal = map(i, 0, 180, leftShoulderMin, leftShoulderMax);
-    //         rightSignal = map(i, 0, 180, rightShoulderMin, rightShoulderMax);
-    //         delayMicroseconds(10);
-    //         servoBoard.setPWM(leftShoulderServo, 0, leftSignal);
-    //         delayMicroseconds(10);
-    //         servoBoard.setPWM(rightShoulderServo, 0, rightSignal);
-    //      }
+     int currentLeftPWM = map(currentShoulderAngle, 0, 180, leftShoulderMin, leftShoulderMax);
+     int currentRightPWM = map(currentShoulderAngle, 0, 180, rightShoulderMin, rightShoulderMax);
 
-    //  } else {
-    //     for(int i = currentShoulderAngle; i >= angle; i -= 5) {
-    //         leftSignal = map(i, 0, 180, leftShoulderMin, rightShoulderMax);
-    //         rightSignal = map(i, 0, 180, rightShoulderMin, rightShoulderMax);
-    //         delayMicroseconds(10);
-    //         servoBoard.setPWM(leftShoulderServo, 0, leftSignal);
-    //         delayMicroseconds(10);
-    //         servoBoard.setPWM(rightShoulderServo, 0, rightSignal);
-    //     }
+    int leftStepDirection = (currentLeftPWM < finalLeftPWM) ? 5:-5;
+    int rightStepDirection = (currentRightPWM < finalRightPWM) ? 5:-5;
 
-    //  }
 
-    servoBoard.setPWM(leftShoulderServo, 0, leftSignal);
-    servoBoard.setPWM(rightShoulderServo, 0, rightSignal);
+    int rightPWM = currentRightPWM;
+    if(currentLeftPWM > finalLeftPWM && currentRightPWM < finalRightPWM) {
+        for(int leftPWM = currentLeftPWM; leftPWM > finalLeftPWM; leftPWM += leftStepDirection) {
+            servoBoard.setPWM(leftShoulderServo, 0, leftPWM);
+            servoBoard.setPWM(rightShoulderServo, 0, rightPWM);
+            rightPWM += rightStepDirection;
+            delay(25);
+
+        }
+    } else {
+        for(int leftPWM = currentLeftPWM; leftPWM < finalLeftPWM; leftPWM += leftStepDirection) {
+            servoBoard.setPWM(leftShoulderServo, 0, leftPWM);
+            servoBoard.setPWM(rightShoulderServo, 0, rightPWM);
+            rightPWM += rightStepDirection;
+            delay(25);
+
+        }
+    }
+
+    servoBoard.setPWM(leftShoulderServo, 0, finalLeftPWM);
+    servoBoard.setPWM(rightShoulderServo, 0, finalRightPWM);
 
     currentShoulderAngle = angle;
-    
+    Serial.print("Shoulder moved to: ");
+    Serial.print(angle);
 
 }
 
 void moveForearm(int angle)
 {
     if(angle < 0 || angle > 180) return;
-    int forearmSignal = map(angle, 0, 180, forearmMin, forearmMax);
-    // if(angle > currentForearmAngle) {
-    //     for(int i = currentForearmAngle; i <= angle; i += 5) {
-    //         forearmSignal = map(i, 0, 180, forearmMax, forearmMin);
-    //         servoBoard.setPWM(forearmServo, 0, forearmSignal);
-    //         delayMicroseconds(10);
-    //      }
 
-    //  } else {
-    //     for(int i = currentForearmAngle; i >= angle; i -= 5) {
-    //         forearmSignal = map(i, 0, 180, forearmMax, forearmMin);
-    //         servoBoard.setPWM(forearmServo, 0, forearmSignal);
-    //         delayMicroseconds(10);
-    //      }
-
-    //  }
+    int currentPWMValue = map(currentForearmAngle, 0, 180, forearmMin, forearmMax);
+    int finalPWMValue = map(angle, 0, 180, forearmMin, forearmMax);
     
-    servoBoard.setPWM(forearmServo, 0, forearmSignal);
+    int stepDirection = (currentPWMValue < finalPWMValue) ? 5:-5;
 
+    if(currentPWMValue > finalPWMValue) {
+        for(int pwm = currentPWMValue; pwm > finalPWMValue; pwm += stepDirection) {
+            servoBoard.setPWM(forearmServo, 0, pwm);
+            delay(20);
+        }
+    } else {
+        for(int pwm = currentPWMValue; pwm < finalPWMValue; pwm += stepDirection) {
+            servoBoard.setPWM(forearmServo, 0, pwm);
+            delay(20);
+        }
+    }
+
+    servoBoard.setPWM(forearmServo, 0, finalPWMValue);
     currentForearmAngle = angle;
+
+    Serial.println("Forearm moved to: ");
+    Serial.print(angle);
     
+}
+
+void moveWrist(int angle) 
+{
+
+    if(angle < 0 || angle > 180) return;
+
+    int currentPWMValue = map(currentWristAngle, 0, 180, wristMin, wristMax);
+    int finalPWMValue = map(angle, 0, 180, wristMin, wristMax);
+
+    int stepDirection = (currentPWMValue < finalPWMValue) ? 5:-5;
+
+    if(currentPWMValue > finalPWMValue) {
+        for(int pwm = currentPWMValue; pwm > finalPWMValue; pwm += stepDirection) {
+            servoBoard.setPWM(wristServo, 0, pwm);
+            delay(20);
+        }
+    } else {
+        for(int pwm = currentPWMValue; pwm < finalPWMValue; pwm += stepDirection) {
+            servoBoard.setPWM(wristServo, 0, pwm);
+            delay(10);
+        }
+    }
+
+    servoBoard.setPWM(wristServo, 0, finalPWMValue);
+    currentWristAngle = angle;
+
+    Serial.println("Wrist moved to: ");
+    Serial.print(angle);
+
 }
 
 void moveClaw(int angle) {
@@ -224,32 +264,6 @@ void moveClaw(int angle) {
     int clawSignal = map(angle, 0, 180, clawClose, clawOpen);
     servoBoard.setPWM(clawServo, 0, clawSignal);
     delay(500);
-}
-
-void moveWrist(int angle) 
-{
-    if(angle < 0 || angle > 180) return;
-
-    int wristSignal = map(angle, 0, 180, wristMin, wristMax);
-    // if(angle > currentWristAngle) {
-    //     for(int i = currentWristAngle; i <= angle; i += 5) {
-    //         wristSignal = map(i, 0, 180, wristMin, wristMax);
-    //         servoBoard.setPWM(wristServo, 0, wristSignal);
-    //         delayMicroseconds(10);        
-    //     }
-
-    // } else {
-    //     for(int i = currentWristAngle; i >= angle; i -= 5) {
-    //         wristSignal = map(i, 0, 180, wristMin, wristMax);
-    //         servoBoard.setPWM(wristServo, 0, wristSignal);
-    //         delayMicroseconds(10);
-    //     }
-    // }
-
-
-    servoBoard.setPWM(wristServo, 0, wristSignal);
-    currentWristAngle = angle;
-
 }
 
 void moveTo(double Xe, double Ye, double AngleEInDeg)

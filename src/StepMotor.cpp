@@ -13,8 +13,8 @@
 #define MS2 36
 #define MS3 38
 
-int DIR = 30;
-int STEP = 28;
+int DIR = 7;
+int STEP = 8;
 
 Stepper baseMotor = Stepper(NUMOFSTEPS, STEP, DIR);
 int motorDelay = 500;
