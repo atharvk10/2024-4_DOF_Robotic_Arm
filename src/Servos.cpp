@@ -10,11 +10,11 @@
 Adafruit_PWMServoDriver servoBoard = Adafruit_PWMServoDriver();
 
 //Servo Ports
-int clawServo = 4;
 int leftShoulderServo = 0; //Shoulder arm that has the forerarm servo attached (looking at it from the front ahead).
 int rightShoulderServo = 3;
 int forearmServo = 7;
 int wristServo = 11;
+int clawServo = 12;
 
 
 //MIN and MAX PUlSE NUMBERS (with respect to the vertical axis from the base of the robot)
