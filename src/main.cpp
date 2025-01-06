@@ -10,10 +10,6 @@ void setup() {
     Serial.begin(9600);
     initSensors();
     initServos(); 
-    delay(2000);
-    moveShoulder(65);
-    moveForearm(125);
-    moveWrist(90);
 
 
 
@@ -29,6 +25,14 @@ void loop() {
 
   //   finishedRun = true;
   // }
+
+  rotate(500, 1, 250);
+  delay(1000);
+
+
+
+
+    
 
 
 

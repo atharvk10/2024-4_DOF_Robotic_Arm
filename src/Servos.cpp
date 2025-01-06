@@ -7,7 +7,7 @@
 #define MAX_PULSE_WIDTH 2350
 #define FREQ 50
 
-Adafruit_PWMServoDriver servoBoard = Adafruit_PWMServoDriver();
+Adafruit_PWMServoDriver servoBoard = Adafruit_PWMServoDriver(0x40);
 
 //Servo Ports
 int leftShoulderServo = 0; //Shoulder arm that has the forerarm servo attached (looking at it from the front ahead).
@@ -59,6 +59,9 @@ int startClawAngle;
 
 
 void initServos() {
+
+    Wire.begin();
+    
     servoBoard.begin();
     servoBoard.setPWMFreq(FREQ);
 
