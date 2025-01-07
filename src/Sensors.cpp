@@ -9,16 +9,14 @@
 #define TRIGGER 31
 #define ECHO 33
 
-int redMin = 77, redMax = 126;
-int greenMin = 72, greenMax = 122;
-int blueMin = 74, blueMax = 117;
+//Values are PWM based
+int redMin = 73, redMax = 207;
+int greenMin = 75, greenMax = 201;
+int blueMin = 72, blueMax = 181;
 
-int redThreshold = 225;
-int greenThreshold = 225;
-int blueThreshold = 225;
+int threshold = 120;
 
-
-double minDistance = 6.5;
+double minDistance = 3.5;
 
 void initSensors() {
 
@@ -51,7 +49,7 @@ bool checkIfVisible()
     
     Serial.println(distance);
 
-    if(distance <= minDistance) {
+    if(distance < minDistance) {
         return true;
     } else {
         return false;
@@ -64,30 +62,18 @@ int checkColor()
         digitalWrite(S2, LOW);
         digitalWrite(S3, LOW);
         int redFreq = pulseIn(OUT, LOW);
-        if(redFreq > redMax) redFreq = redMax;
-        if (redFreq < redMin) redFreq = redMin;
-        int red = map(redFreq, redMin, redMax, 255, 0);
-        
         delay(100);
 
         //Checking for blue 
         digitalWrite(S2, LOW);
         digitalWrite(S3, HIGH);
         int blueFreq = pulseIn(OUT, LOW);
-        if(blueFreq > blueMax) blueFreq = blueMax;
-        if(blueFreq < blueMin) blueFreq = blueMin;
-        int blue = map(blueFreq, blueMin, blueMax, 255, 0);
-
         delay(100);
 
         //Checking for green
         digitalWrite(S2, HIGH);
         digitalWrite(S3, HIGH);
         int greenFreq = pulseIn(OUT, LOW);
-        if(greenFreq > greenMax) greenFreq = greenMax;
-        if(greenFreq < greenMin) greenFreq = greenMin;
-        int green = map(greenFreq, greenMin, greenMax, 255, 0); 
-
         delay(100);
 
         // Serial.print(red);
@@ -96,26 +82,15 @@ int checkColor()
         // Serial.print("       ");
         // Serial.print(blue); 
 
-        if(red > redThreshold && blue < blueThreshold && green < greenThreshold) {
-            Serial.println("RED DETECTED");
+        if(redFreq < threshold) {
             return 1;
-        }
-
-        if(green > greenThreshold && red < redThreshold && blue < blueThreshold) {
-            Serial.println("GREEN DETECTED");
+        } else if(greenFreq < threshold) {
             return 2;
-        }
-
-        if(blue > blueThreshold && red > redThreshold && green > greenThreshold) {
-            Serial.println("YELLOW DETECTED");
+        } else if(blueFreq < threshold) {
             return 3;
         }
 
-        Serial.println();
-
-    return 0;
-
-   
+        return 0;
 }  
 
 

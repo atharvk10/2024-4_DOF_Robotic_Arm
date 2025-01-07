@@ -26,8 +26,6 @@ void loop() {
   //   finishedRun = true;
   // }
 
-  rotate(500, 1, 250);
-  delay(1000);
 
 
 
