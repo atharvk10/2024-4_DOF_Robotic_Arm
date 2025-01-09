@@ -54,27 +54,31 @@ bool checkIfVisible()
     } else {
         return false;
     }
+    
+    delayMicroseconds(200);
 }
 
-int checkColor()
-{
+
+int readColor()
+{   
+
+
+    delayMicroseconds(500);
+
         //Checking for red
         digitalWrite(S2, LOW);
         digitalWrite(S3, LOW);
         int redFreq = pulseIn(OUT, LOW);
-        delay(100);
 
         //Checking for blue 
         digitalWrite(S2, LOW);
         digitalWrite(S3, HIGH);
         int blueFreq = pulseIn(OUT, LOW);
-        delay(100);
 
         //Checking for green
         digitalWrite(S2, HIGH);
         digitalWrite(S3, HIGH);
         int greenFreq = pulseIn(OUT, LOW);
-        delay(100);
 
         // Serial.print(red);
         // Serial.print("       ");

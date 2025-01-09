@@ -8,23 +8,42 @@
 #define SIDEREV 200
 
 #define MOTORSPEED 150
+#define DIR 51
+#define STEP 53
 
+#define MS1 48
+#define MS2 52
+#define MS3 50
 
-int DIR = 7;
-int STEP = 8;
 
 Stepper baseMotor = Stepper(NUMOFSTEPS, STEP, DIR);
 int motorDelay = 500;
 
+void initStepper() {
+
+    pinMode(DIR, OUTPUT);
+    pinMode(STEP, OUTPUT);
+}
+
 
 void rotateNinety(int dir, int speed)
 {
-    baseMotor.setSpeed(speed);
-    //1 is for clockwise, 0 is for counterclockwise
-    if(dir == 1) baseMotor.step(SIDEREV);
-    if(dir == 0) baseMotor.step(-SIDEREV);
+    // baseMotor.setSpeed(speed);
+    // //1 is for clockwise, 0 is for counterclockwise
+    // if(dir == 1) baseMotor.step(SIDEREV);
+    // if(dir == 0) baseMotor.step(-SIDEREV);
 
-    delay(motorDelay);
+    // delay(motorDelay);
+
+    digitalWrite(DIR, HIGH);
+
+    for(int i = 0; i < 100; i++) {
+        digitalWrite(STEP, HIGH);
+        delayMicroseconds(1000);
+        digitalWrite(STEP, LOW);
+        delayMicroseconds(1000);
+    }
+
 }
 
 void rotateOneEighty(int speed)

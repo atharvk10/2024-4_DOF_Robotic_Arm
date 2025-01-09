@@ -3,6 +3,8 @@
 #include "Servos.h"
 #include "StepMotor.h"
 
+boolean finishedRun = false;
+
 // put function declarations here:
 
 void setup() {
@@ -10,7 +12,7 @@ void setup() {
     Serial.begin(9600);
     initSensors();
     initServos(); 
-
+    initStepper();
 
 
 
@@ -18,13 +20,20 @@ void setup() {
 }
 
 void loop() {
-  // boolean finishedRun = false;
+  // finishedRun = false;
+
   // while(!finishedRun) {
   //   placeObject();
   //   delay(500);
 
   //   finishedRun = true;
-  // }
+  // } 
+
+
+
+  
+
+    
 
 
 

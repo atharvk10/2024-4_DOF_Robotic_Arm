@@ -1,0 +1,30 @@
+
+Prelims to Wake up the robot:
+- Bring the servos to life and allow the servo board to be awake (initServos)
+- Bring the sensors to life, we initialize them to the proper settings (initSensors)
+
+Once it's awake, we are now ready to place objects
+- We roll an object down the ramp: 
+
+        First --> the distance sensor detects that an object is rolling on the ramp (checkIfVisible)
+        Second --> once the computer knows that an object is coming, it will read the color (readColor)
+
+        Based on the color, it will pick it up and place it in the correct box and that's it
+
+Issue: 
+- The color sensor will only read the color if the ball is STILL in front of the sensor
+- I need to make sure that the current run is still being completed and does not get interrupted by another object.
+    - It should finish the run and then pick up the next object
+
+Solution:
+- Using threading to wait for something to finish and then keep going
+
+loop method breakdown in main:
+- begin a new thread
+- detect the object and read the color of the object
+- based on the color, place the object 
+- finish thread
+- continue and reset thread 
+
+
+grabbing Object

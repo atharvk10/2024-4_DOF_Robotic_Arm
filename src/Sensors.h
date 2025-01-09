@@ -12,6 +12,6 @@ void initSensors();
 bool checkIfVisible();
 
 //Checks the color of the object near the sensor (will return 1, 2, or 3 depending on what color is read).
-int checkColor(); 
+int readColor(); 
 
 #endif
